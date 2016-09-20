@@ -42,7 +42,28 @@ class ViewController: UIViewController, UITableViewDataSource {
 
     @IBAction func addHit(sender: AnyObject) {
         
+        let alert = UIAlertController(title: "New Name", message: "Add a new name", preferredStyle: .Alert)
         
+        let saveAction = UIAlertAction(title: "Save", style: .Default, handler: { (action:UIAlertAction) -> Void in
+            
+            let textField = alert.textFields!.first
+            self.names.append(textField!.text!)
+            self.tableView.reloadData()
+            
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Default) {
+            (action : UIAlertAction) -> Void in
+            }
+        
+        alert.addTextFieldWithConfigurationHandler {(textField : UITextField) -> Void in
+        
+        }
+        
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        
+        presentViewController(alert, animated: true, completion: nil)
         
     }
 
