@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = " \"The List\" "
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         
         self.fetchName()
         
@@ -29,27 +29,27 @@ class ViewController: UIViewController, UITableViewDataSource {
 
     
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return self.people.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         
-        let person = people[indexPath.row]
+        let person = people[(indexPath as NSIndexPath).row]
         
-        cell!.textLabel!.text = person.valueForKey("name") as? String
+        cell!.textLabel!.text = person.value(forKey: "name") as? String
         
         
         return cell!
     }
 
-    @IBAction func addHit(sender: AnyObject) {
+    @IBAction func addHit(_ sender: AnyObject) {
         
-        let alert = UIAlertController(title: "New Name", message: "Add a new name", preferredStyle: .Alert)
+        let alert = UIAlertController(title: "New Name", message: "Add a new name", preferredStyle: .alert)
         
-        let saveAction = UIAlertAction(title: "Save", style: .Default, handler: { (action:UIAlertAction) -> Void in
+        let saveAction = UIAlertAction(title: "Save", style: .default, handler: { (action:UIAlertAction) -> Void in
             
             let textField = alert.textFields!.first
             self.saveName(textField!.text!)
@@ -57,35 +57,35 @@ class ViewController: UIViewController, UITableViewDataSource {
             
         })
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Default) {
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) {
             (action : UIAlertAction) -> Void in
             }
         
-        alert.addTextFieldWithConfigurationHandler {(textField : UITextField) -> Void in
+        alert.addTextField {(textField : UITextField) -> Void in
         
         }
         
         alert.addAction(saveAction)
         alert.addAction(cancelAction)
         
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
         
     }
     // Saves to core data
     
-    func saveName(name: String) {
+    func saveName(_ name: String) {
         //1
         let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
+            UIApplication.shared.delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext
         
         //2
-        let entity =  NSEntityDescription.entityForName("Person",
-                                                        inManagedObjectContext:managedContext)
+        let entity =  NSEntityDescription.entity(forEntityName: "Person",
+                                                        in:managedContext)
         
         let person = NSManagedObject(entity: entity!,
-                                     insertIntoManagedObjectContext: managedContext)
+                                     insertInto: managedContext)
         
         //3
         person.setValue(name, forKey: "name")
@@ -102,17 +102,17 @@ class ViewController: UIViewController, UITableViewDataSource {
     
     func fetchName() {
         let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
+            UIApplication.shared.delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext
         
         //2
-        let fetchRequest = NSFetchRequest(entityName: "Person")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
         
         //3
         do {
             let results =
-                try managedContext.executeFetchRequest(fetchRequest)
+                try managedContext.fetch(fetchRequest)
             people = results as! [NSManagedObject]
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
